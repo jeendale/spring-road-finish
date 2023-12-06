@@ -31,4 +31,8 @@ public class Comment extends Timestamped{
         this.user = userDetails.getUser();
         this.text = req.getText();
     }
+
+    public void update(CommentRequestDto req) {
+        this.text = req.getText();
+    }
 }

@@ -7,11 +7,13 @@ import com.example.springroadproject.entity.Post;
 import com.example.springroadproject.repository.CommentRepository;
 import com.example.springroadproject.repository.PostRepository;
 import com.example.springroadproject.security.UserDetailsImpl;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +39,23 @@ public class CommentService {
             commentsList.add(new CommentResponseDto(commentList.get(i)));
         }
         return commentsList;
+    }
+
+    @Transactional
+    public void modifyComment(Long id, Long commentId, CommentRequestDto req, UserDetailsImpl user) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(("해당 게시글이 없습니다.")));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException(("해당 댓글이 없습니다.")));
+        if (!Objects.equals(comment.getUser().getId(), user.getUser().getId())) {
+            throw new IllegalArgumentException("댓글 작성자만 수정 가능합니다");
+        }
+        comment.update(req);
+    }
+    public void deleteComment(Long id, Long commentId, UserDetailsImpl user) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(("해당 게시글이 없습니다.")));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException(("해당 댓글이 없습니다.")));
+        if (!Objects.equals(comment.getUser().getId(), user.getUser().getId())) {
+            throw new IllegalArgumentException("댓글 작성자만 삭제 가능합니다");
+        }
+        commentRepository.delete(comment);
     }
 }
