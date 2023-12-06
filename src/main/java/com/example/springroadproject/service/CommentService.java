@@ -10,6 +10,9 @@ import com.example.springroadproject.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -25,5 +28,14 @@ public class CommentService {
         Comment saveComment = commentRepository.save(comment);
         CommentResponseDto commentResponseDto = new CommentResponseDto(saveComment);
         return commentResponseDto;
+    }
+
+    public List<CommentResponseDto> getComments() {
+        List<Comment> commentList = commentRepository.findAll();
+        List<CommentResponseDto> commentsList = new ArrayList<>();
+        for (int i = 0; i < commentList.size(); i++) {
+            commentsList.add(new CommentResponseDto(commentList.get(i)));
+        }
+        return commentsList;
     }
 }

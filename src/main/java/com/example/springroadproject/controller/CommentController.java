@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/posts")
 @RequiredArgsConstructor
@@ -26,4 +28,10 @@ public class CommentController {
             return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
     }
+    @GetMapping("/{id}/comments")
+    public List<CommentResponseDto> getComments(@PathVariable Long id){
+        return commentService.getComments();
+    }
+
+
 }
