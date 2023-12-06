@@ -36,4 +36,13 @@ public class PostController {
             return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
     }
+    @PatchMapping("/{id}")
+    public ResponseEntity<CommonResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl user){
+        try {
+            postService.updatePost(id,requestDto,user);
+            return ResponseEntity.ok().body(new CommonResponseDto("수정완료",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
+    }
 }
