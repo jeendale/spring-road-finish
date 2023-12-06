@@ -56,6 +56,7 @@ public class WebSecurityFilter {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers(HttpMethod.POST,"/v1/users/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
                         .requestMatchers(HttpMethod.GET,"/v1/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/v1/posts/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 

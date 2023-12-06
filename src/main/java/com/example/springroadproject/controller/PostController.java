@@ -8,10 +8,9 @@ import com.example.springroadproject.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/posts")
@@ -22,5 +21,9 @@ public class PostController {
     public ResponseEntity<CommonResponseDto> createPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
         PostResponseDto postResponseDto = postService.createPost(postRequestDto,userDetailsImpl);
         return ResponseEntity.ok().body(postResponseDto);
+    }
+    @GetMapping
+    public List<PostResponseDto> getPostList(){
+        return postService.getPostList();
     }
 }
