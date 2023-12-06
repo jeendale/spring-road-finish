@@ -49,4 +49,12 @@ public class PostService {
         }
         post.update(requestDto);
     }
+
+    public void deletePost(Long id, UserDetailsImpl user) {
+        Post post = postRepository.findById(id).orElseThrow(()->new IllegalArgumentException("해당 id 게시물이 없습니다."));
+        if(!Objects.equals(post.getUser().getId(), user.getUser().getId())){
+            throw new IllegalArgumentException("게시물 작성자만 삭제 가능합니다");
+        }
+        postRepository.delete(post);
+    }
 }
