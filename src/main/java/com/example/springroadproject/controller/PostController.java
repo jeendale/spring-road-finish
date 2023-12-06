@@ -6,6 +6,7 @@ import com.example.springroadproject.dto.PostResponseDto;
 import com.example.springroadproject.security.UserDetailsImpl;
 import com.example.springroadproject.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,5 +26,14 @@ public class PostController {
     @GetMapping
     public List<PostResponseDto> getPostList(){
         return postService.getPostList();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponseDto> getPost(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok().body(postService.getPost(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        }
     }
 }
