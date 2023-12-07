@@ -45,9 +45,17 @@ public class User {
         this.phone = userRequestDto.getPhone();
     }
 
-    public User update(UserRequestDto userRequestDto, String encodedPassword) {
+    public User updateWithNewPW(UserRequestDto userRequestDto, String encodedPassword) {
         this.username = userRequestDto.getUsername()== null? this.username : userRequestDto.getUsername();
         this.password = Objects.equals(encodedPassword, "") ? this.password : encodedPassword;
+        this.introduction = userRequestDto.getIntroduction()== null? this.introduction : userRequestDto.getIntroduction();
+        this.address = userRequestDto.getAddress()== null? this.address : userRequestDto.getAddress();
+        this.phone = userRequestDto.getPhone()== null? this.phone : userRequestDto.getPhone();
+        return this;
+    }
+
+    public User update(UserRequestDto userRequestDto) {
+        this.username = userRequestDto.getUsername()== null? this.username : userRequestDto.getUsername();
         this.introduction = userRequestDto.getIntroduction()== null? this.introduction : userRequestDto.getIntroduction();
         this.address = userRequestDto.getAddress()== null? this.address : userRequestDto.getAddress();
         this.phone = userRequestDto.getPhone()== null? this.phone : userRequestDto.getPhone();

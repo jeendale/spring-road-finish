@@ -7,10 +7,16 @@ import lombok.Getter;
 public class UserRequestDto {
     @Pattern(regexp ="^[a-z0-9]{4,10}$")
     private String username;
+
     @Pattern(regexp ="^[a-zA-Z0-9!@#$%^&*+=]{8,15}$")
     private String password;
+
     private String introduction;
+
     private String address;
+
     private String phone;
+
+    @Pattern(regexp ="^[a-zA-Z0-9!@#$%^&*+=]{8,15}$")
     private String newPassword;
 }

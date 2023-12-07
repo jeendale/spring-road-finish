@@ -40,17 +40,19 @@ public class UserService {
     @Transactional
     public UserResponseDto updateProfile(Long id, UserRequestDto userRequestDto, UserDetailsImpl userDetailsImpl) {
         User user = userRepository.findById(id).orElseThrow(()->new IllegalArgumentException("해당 id의 정보가 없습니다."));
-        if(!(userRequestDto.getPassword() == null)) {
+        if(userRequestDto.getNewPassword()!=null) {
+            if (userRequestDto.getPassword() == null) {
+                throw new IllegalArgumentException("기존 비밀번호를 입력해야 새로운 비밀번호 변경가능");
+            }
             if (!passwordEncoder.matches(userRequestDto.getPassword(), userDetailsImpl.getPassword())) {
                 throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
             }
+            String encodedPassword = passwordEncoder.encode(userRequestDto.getNewPassword());
+            User updatedUser = user.updateWithNewPW(userRequestDto, encodedPassword);
+            return new UserResponseDto(updatedUser);
+        }else{
+            user.update(userRequestDto);
+            return new UserResponseDto(user);
         }
-        String encodedPassword = "";
-        if (userRequestDto.getNewPassword() != null) {
-            encodedPassword = passwordEncoder.encode(userRequestDto.getNewPassword());
-        }
-        User updatedUser = user.update(userRequestDto,encodedPassword);
-
-        return new UserResponseDto(updatedUser);
     }
 }
