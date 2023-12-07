@@ -2,20 +2,26 @@ package com.example.springroadproject.service;
 
 import com.example.springroadproject.dto.UserRequestDto;
 import com.example.springroadproject.dto.UserResponseDto;
+import com.example.springroadproject.entity.PwHistory;
 import com.example.springroadproject.entity.User;
+import com.example.springroadproject.repository.PwRepository;
 import com.example.springroadproject.repository.UserRepository;
 import com.example.springroadproject.security.UserDetailsImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PwRepository pwRepository;
 
     public void signup(UserRequestDto userRequestDto) {
         if(userRepository.findByUsername(userRequestDto.getUsername()).isPresent()){
@@ -24,6 +30,7 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userRequestDto.getPassword());
         User user = new User(userRequestDto,encodedPassword);
         userRepository.save(user);
+        pwRepository.save(new PwHistory(user,encodedPassword));
     }
 
     public void login(UserRequestDto userRequestDto) {
@@ -47,6 +54,14 @@ public class UserService {
             if (!passwordEncoder.matches(userRequestDto.getPassword(), userDetailsImpl.getPassword())) {
                 throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
             }
+            List<PwHistory>passwordList = pwRepository.findTop3ByUserIdOrderByCreatedAtDesc(id);
+            for (PwHistory pwHistory : passwordList) {
+                if(passwordEncoder.matches(userRequestDto.getNewPassword(), pwHistory.getPassword())){
+                    throw new IllegalArgumentException("사용했던 비밀번호는 재사용할 수 없습니다.");
+                }
+            }
+            PwHistory usedPW = new PwHistory(userDetailsImpl.getUser(),passwordEncoder.encode(userRequestDto.getNewPassword()));
+            pwRepository.save(usedPW);
             String encodedPassword = passwordEncoder.encode(userRequestDto.getNewPassword());
             User updatedUser = user.updateWithNewPW(userRequestDto, encodedPassword);
             return new UserResponseDto(updatedUser);
