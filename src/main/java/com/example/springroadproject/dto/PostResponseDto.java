@@ -14,6 +14,7 @@ public class PostResponseDto extends CommonResponseDto{
     private LocalDateTime modifiedAt;
 
     public PostResponseDto(Post savePost) {
+        this.id = savePost.getId();
         this.title = savePost.getTitle();
         this.content = savePost.getContent();
         this.createdAt = savePost.getCreatedAt();
