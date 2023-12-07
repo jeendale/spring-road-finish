@@ -1,5 +1,6 @@
 package com.example.springroadproject.jwt;
 
+import com.example.springroadproject.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -67,11 +68,22 @@ public class JwtUtil {
     public String createToken(String username) {
         Date date = new Date();
 
-        // 토큰 만료시간 10분
         long TOKEN_TIME = 60 * 60 * 1000;
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(username)
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                        .setIssuedAt(date)
+                        .signWith(key, signatureAlgorithm)
+                        .compact();
+    }
+
+    public String logoutToken() {
+        Date date = new Date();
+
+        long TOKEN_TIME = 1000;
+        return BEARER_PREFIX +
+                Jwts.builder()
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)

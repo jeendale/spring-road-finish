@@ -53,4 +53,9 @@ public class UserController {
             return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
         }
     }
+    @PostMapping("/logout")
+    public ResponseEntity<CommonResponseDto> logout(HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails){
+            response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.logoutToken());
+            return ResponseEntity.ok().body(new CommonResponseDto("로그아웃 완료",HttpStatus.OK.value()));
+    }
 }
