@@ -1,5 +1,6 @@
 package com.example.springroadproject.service;
 
+import com.example.springroadproject.dto.LoginRequestDto;
 import com.example.springroadproject.dto.UserRequestDto;
 import com.example.springroadproject.dto.UserResponseDto;
 import com.example.springroadproject.entity.PwHistory;
@@ -48,9 +49,9 @@ public class UserService {
         pwRepository.save(new PwHistory(user,encodedPassword));
     }
 
-    public void login(UserRequestDto userRequestDto, HttpServletResponse response) {
-        String username = userRequestDto.getUsername();
-        String password = userRequestDto.getPassword();
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        String username =loginRequestDto.getUsername();
+        String password = loginRequestDto.getPassword();
         //db에 이름 여부 파악
         User user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("해당이름이 없습니다."));
         //비밀번호 일치
@@ -59,7 +60,7 @@ public class UserService {
         }
 
         //user.getRole() 사용위해 JWT생성 및 쿠키에 저장
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(userRequestDto.getUsername(),user.getRole()));
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(loginRequestDto.getUsername(),user.getRole()));
     }
 
     @Transactional

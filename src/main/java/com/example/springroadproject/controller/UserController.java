@@ -1,8 +1,8 @@
 package com.example.springroadproject.controller;
 
 import com.example.springroadproject.dto.CommonResponseDto;
+import com.example.springroadproject.dto.LoginRequestDto;
 import com.example.springroadproject.dto.UserRequestDto;
-import com.example.springroadproject.dto.UserResponseDto;
 import com.example.springroadproject.jwt.JwtUtil;
 import com.example.springroadproject.security.UserDetailsImpl;
 import com.example.springroadproject.service.UserService;
@@ -33,9 +33,9 @@ public class UserController {
         }
     }
     @PostMapping("/login")
-    public ResponseEntity<CommonResponseDto> login(@RequestBody UserRequestDto userRequestDto, HttpServletResponse response){
+    public ResponseEntity<CommonResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
         try {
-            userService.login(userRequestDto,response);
+            userService.login(loginRequestDto,response);
             //토큰 생성시 userRole을 받기위해 JWT인증 및 쿠키 생성을 UserService로 넘겼습니다.
             return ResponseEntity.ok().body(new CommonResponseDto("로그인 완료",HttpStatus.OK.value()));
         } catch (IllegalArgumentException e) {
