@@ -35,8 +35,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<CommonResponseDto> login(@RequestBody UserRequestDto userRequestDto, HttpServletResponse response){
         try {
-            userService.login(userRequestDto);
-            response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(userRequestDto.getUsername()));
+            userService.login(userRequestDto,response);
+            //토큰 생성시 userRole을 받기위해 JWT인증 및 쿠키 생성을 UserService로 넘겼습니다.
             return ResponseEntity.ok().body(new CommonResponseDto("로그인 완료",HttpStatus.OK.value()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));

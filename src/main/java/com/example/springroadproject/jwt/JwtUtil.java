@@ -1,5 +1,6 @@
 package com.example.springroadproject.jwt;
 
+import com.example.springroadproject.entity.UserRoleEnum;
 import com.example.springroadproject.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -20,6 +21,9 @@ public class JwtUtil {
 
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    //권한 구분 값
+    public static final String  AUTHORIZATION_KEY="auth";
 
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
@@ -65,13 +69,15 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-    public String createToken(String username) {
+
+    public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
         long TOKEN_TIME = 60 * 60 * 1000;
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(username)
+                        .claim(AUTHORIZATION_KEY,role)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)

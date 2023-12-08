@@ -5,9 +5,11 @@ import com.example.springroadproject.dto.UserResponseDto;
 import com.example.springroadproject.entity.PwHistory;
 import com.example.springroadproject.entity.User;
 import com.example.springroadproject.entity.UserRoleEnum;
+import com.example.springroadproject.jwt.JwtUtil;
 import com.example.springroadproject.repository.PwRepository;
 import com.example.springroadproject.repository.UserRepository;
 import com.example.springroadproject.security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final PwRepository pwRepository;
-
+    private final JwtUtil jwtUtil;
     //admin 토큰 부여
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -46,7 +48,7 @@ public class UserService {
         pwRepository.save(new PwHistory(user,encodedPassword));
     }
 
-    public void login(UserRequestDto userRequestDto) {
+    public void login(UserRequestDto userRequestDto, HttpServletResponse response) {
         String username = userRequestDto.getUsername();
         String password = userRequestDto.getPassword();
         //db에 이름 여부 파악
@@ -55,6 +57,9 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
+        //user.getRole() 사용위해 JWT생성 및 쿠키에 저장
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(userRequestDto.getUsername(),user.getRole()));
     }
 
     @Transactional
