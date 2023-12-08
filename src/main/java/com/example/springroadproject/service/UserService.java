@@ -4,6 +4,7 @@ import com.example.springroadproject.dto.UserRequestDto;
 import com.example.springroadproject.dto.UserResponseDto;
 import com.example.springroadproject.entity.PwHistory;
 import com.example.springroadproject.entity.User;
+import com.example.springroadproject.entity.UserRoleEnum;
 import com.example.springroadproject.repository.PwRepository;
 import com.example.springroadproject.repository.UserRepository;
 import com.example.springroadproject.security.UserDetailsImpl;
@@ -23,12 +24,24 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final PwRepository pwRepository;
 
+    //admin 토큰 부여
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+
     public void signup(UserRequestDto userRequestDto) {
         if(userRepository.findByUsername(userRequestDto.getUsername()).isPresent()){
             throw new IllegalArgumentException("이미 존재하는 유저명입니다.");
         }
+
+        UserRoleEnum role =UserRoleEnum.USER;
+        if(userRequestDto.isAdmin()){
+            if(!ADMIN_TOKEN.equals(userRequestDto.getAdminToken())){
+                throw new IllegalArgumentException("관리자 인증 번호가 다릅니다.");
+            }
+            role=UserRoleEnum.ADMIN;
+        }
+
         String encodedPassword = passwordEncoder.encode(userRequestDto.getPassword());
-        User user = new User(userRequestDto,encodedPassword);
+        User user = new User(userRequestDto,encodedPassword,role);
         userRepository.save(user);
         pwRepository.save(new PwHistory(user,encodedPassword));
     }

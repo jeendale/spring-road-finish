@@ -39,13 +39,18 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Post> passwordList = new ArrayList<>();
 
+    //userRoleEnum이랑 연결 DB에 enum타입 이름 그대로 사용
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
-    public User(UserRequestDto userRequestDto,String encodedPassword) {
+    public User(UserRequestDto userRequestDto,String encodedPassword,UserRoleEnum role) {
         this.username = userRequestDto.getUsername();
         this.password = encodedPassword;
         this.introduction = userRequestDto.getIntroduction();
         this.address = userRequestDto.getAddress();
         this.phone = userRequestDto.getPhone();
+        this.role=role;
     }
 
     public User updateWithNewPW(UserRequestDto userRequestDto, String encodedPassword) {

@@ -57,4 +57,11 @@ public class PostService {
         }
         postRepository.delete(post);
     }
+
+    //관리자
+    @Transactional
+    public void adminupdatePost(Long id, PostRequestDto requestDto, UserDetailsImpl user) {
+        Post post = postRepository.findById(id).orElseThrow(()->new IllegalArgumentException("해당 id 게시물이 없습니다."));
+        post.update(requestDto);
+    }
 }

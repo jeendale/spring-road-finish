@@ -58,4 +58,6 @@ public class UserController {
             response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.logoutToken());
             return ResponseEntity.ok().body(new CommonResponseDto("로그아웃 완료",HttpStatus.OK.value()));
     }
+
+
 }
