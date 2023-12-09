@@ -1,9 +1,6 @@
 package com.example.springroadproject.controller;
 
-import com.example.springroadproject.dto.CommonResponseDto;
-import com.example.springroadproject.dto.PostRequestDto;
-import com.example.springroadproject.dto.PostResponseDto;
-import com.example.springroadproject.dto.UserResponseDto;
+import com.example.springroadproject.dto.*;
 import com.example.springroadproject.entity.Post;
 import com.example.springroadproject.entity.UserRoleEnum;
 import com.example.springroadproject.security.UserDetailsImpl;
@@ -43,6 +40,27 @@ public class AdminController {
     @GetMapping("/users")
     public List<UserResponseDto> getProfileByAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails){
          return userService.getProfileByAdmin(userDetails);
+    }
+
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @PatchMapping("/users/{userId}")
+    public ResponseEntity<CommonResponseDto> updateProfileByAdmin(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
+        try {
+            userService.updateProfileByAdmin(userId,userRequestDto,userDetailsImpl);
+            return ResponseEntity.ok().body(new CommonResponseDto("수정 완료",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<CommonResponseDto> deleteUser(@PathVariable Long userId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        try {
+            userService.deleteUser(userId,userDetails);
+            return ResponseEntity.ok().body(new CommonResponseDto("회원정보 삭제 완료",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
     }
 
 
