@@ -15,19 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/admins")
+@RequestMapping("/v1/admin")
 public class AdminController {
     private final PostService postService;
     //관리자 권한 게시글 전체 수정
-/*    @Secured(UserRoleEnum.Authority.ADMIN)
-    @PostMapping("/admin}")
-    public ResponseEntity<CommonResponseDto> admidUpdatePost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl user){
-        try{
-            return ResponseEntity.ok().body(new CommonResponseDto("관리자 수정", HttpStatus.OK.value()));
-        }catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
-        }
-    }*/
 
     @Secured(UserRoleEnum.Authority.ADMIN) // 관리자용 테스트
     @GetMapping("/products/secured")
