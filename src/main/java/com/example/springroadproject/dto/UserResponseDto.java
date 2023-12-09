@@ -1,7 +1,9 @@
 package com.example.springroadproject.dto;
 
 import com.example.springroadproject.entity.User;
+import lombok.Getter;
 
+@Getter
 public class UserResponseDto extends CommonResponseDto{
     private String username;
     private String introduction;

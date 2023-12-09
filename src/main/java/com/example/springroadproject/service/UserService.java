@@ -1,6 +1,7 @@
 package com.example.springroadproject.service;
 
 import com.example.springroadproject.dto.LoginRequestDto;
+import com.example.springroadproject.dto.PostResponseDto;
 import com.example.springroadproject.dto.UserRequestDto;
 import com.example.springroadproject.dto.UserResponseDto;
 import com.example.springroadproject.entity.PwHistory;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -88,5 +90,15 @@ public class UserService {
             user.update(userRequestDto);
             return new UserResponseDto(user);
         }
+    }
+
+    public List<UserResponseDto> getProfileByAdmin(UserDetailsImpl userDetails) {
+        List<User>userList = userRepository.findAll();
+        List<UserResponseDto> userResponseDtoList= new ArrayList<>();
+        for(int i=0; i<userList.size(); i++){
+            userResponseDtoList.add(new UserResponseDto(userList.get(i)));
+            log.info(userResponseDtoList.get(i).getUsername());
+        }
+        return userResponseDtoList;
     }
 }
