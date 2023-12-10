@@ -121,7 +121,6 @@ public class UserService {
 
     }
 
-
     public void deleteUser(Long userId, UserDetailsImpl userDetails) {
         User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("해당 id의 정보가 없습니다."));
         if(user.getRole()==UserRoleEnum.ADMIN){
@@ -130,4 +129,10 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
+    public void promoteUser(Long userId, UserDetailsImpl userDetails) {
+        User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("해당 id의 정보가 없습니다."));
+        User promotedUser = user.promote(userId);
+        userRepository.save(promotedUser);
+    }
 }
