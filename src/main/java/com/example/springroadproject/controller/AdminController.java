@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,18 +24,36 @@ import java.util.List;
 public class AdminController {
     private final UserService userService;
     private final PostService postService;
-    //관리자 권한 게시글 전체 수정
 
-    @Secured(UserRoleEnum.Authority.ADMIN) // 관리자용 테스트
-    @GetMapping("/products/secured")
-    public String getProductsByAdmin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        System.out.println("userDetails.getUsername() = " + userDetails.getUsername());
-        for (GrantedAuthority authority : userDetails.getAuthorities()) {
-            System.out.println("authority.getAuthority() = " + authority.getAuthority());
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @PostMapping("/posts")
+    public ResponseEntity<CommonResponseDto> noticePost(@RequestBody AdminPostRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        AdminPostResponseDto adminPostResponseDto=postService.createPostByAdmin(requestDto,userDetails);
+        return ResponseEntity.ok().body(adminPostResponseDto);
+    }
+
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<CommonResponseDto> getNoticPost(@PathVariable Long id){
+        try{
+            AdminPostResponseDto responseDto=postService.getNoticePost(id);
+            return ResponseEntity.ok().body(responseDto);
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
         }
 
-        return "완료";
     }
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @PatchMapping("/posts/{postId}")
+    public ResponseEntity<CommonResponseDto> updatePostByAdmin(@PathVariable Long postId,@RequestBody PostRequestDto requestDto){
+        try {
+            postService.updatePostByAdmin(requestDto,postId);
+            return ResponseEntity.ok().body(new CommonResponseDto("수정완료",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
+
 
     @Secured(UserRoleEnum.Authority.ADMIN)
     @GetMapping("/users")
