@@ -108,11 +108,19 @@ public class UserService {
         if(user.getRole()==UserRoleEnum.ADMIN){
             throw new IllegalArgumentException("다른 관리자의 정보는 수정할 수 없습니다.");
         }
-        String encodedPassword = passwordEncoder.encode(userRequestDto.getNewPassword());
-        User updatedUser = user.updateWithNewPW(userRequestDto,encodedPassword);
+        if(userRequestDto.getNewPassword()!=null) {
+            PwHistory usedPW = new PwHistory(userDetailsImpl.getUser(),passwordEncoder.encode(userRequestDto.getNewPassword()));
+            pwRepository.save(usedPW);
+            String encodedPassword = passwordEncoder.encode(userRequestDto.getNewPassword());
+            User updatedUser = user.updateWithNewPW(userRequestDto, encodedPassword);
+            return new UserResponseDto(updatedUser);
+        }else{
+            user.update(userRequestDto);
+            return new UserResponseDto(user);
+        }
 
-        return new UserResponseDto(updatedUser);
     }
+
 
     public void deleteUser(Long userId, UserDetailsImpl userDetails) {
         User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("해당 id의 정보가 없습니다."));
