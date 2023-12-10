@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -68,6 +69,9 @@ public class UserService {
     @Transactional
     public UserResponseDto updateProfile(Long id, UserRequestDto userRequestDto, UserDetailsImpl userDetailsImpl) {
         User user = userRepository.findById(id).orElseThrow(()->new IllegalArgumentException("해당 id의 정보가 없습니다."));
+        if (!Objects.equals(user.getId(), userDetailsImpl.getUser().getId())) {
+            throw new IllegalArgumentException("당사자만 수정 가능합니다");
+        }
         if(userRequestDto.getNewPassword()!=null) {
             if (userRequestDto.getPassword() == null) {
                 throw new IllegalArgumentException("기존 비밀번호를 입력해야 새로운 비밀번호 변경가능");
