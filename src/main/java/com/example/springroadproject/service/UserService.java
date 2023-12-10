@@ -102,6 +102,7 @@ public class UserService {
         return userResponseDtoList;
     }
 
+    @Transactional
     public UserResponseDto updateProfileByAdmin(Long userId, UserRequestDto userRequestDto, UserDetailsImpl userDetailsImpl) {
         User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("해당 id의 정보가 없습니다."));
         if(user.getRole()==UserRoleEnum.ADMIN){
