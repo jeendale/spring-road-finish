@@ -1,7 +1,6 @@
 package com.example.springroadproject.controller;
 
 import com.example.springroadproject.dto.*;
-import com.example.springroadproject.entity.Post;
 import com.example.springroadproject.entity.UserRoleEnum;
 import com.example.springroadproject.security.UserDetailsImpl;
 import com.example.springroadproject.service.PostService;
@@ -10,13 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLOutput;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,7 +25,7 @@ public class AdminController {
     @PostMapping("/notices")
     public ResponseEntity<CommonResponseDto> noticePost(@RequestBody PostRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails){
         AdminPostResponseDto adminPostResponseDto=postService.createPostByAdmin(requestDto,userDetails);
-        return ResponseEntity.ok().body(adminPostResponseDto);
+        return ResponseEntity.ok().body(new CommonResponseDto("공지 작성완료",HttpStatus.OK.value()));
     }
 
     @GetMapping("/notices/{id}")

@@ -1,9 +1,11 @@
 package com.example.springroadproject.dto;
 
 import com.example.springroadproject.entity.AdminPost;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class AdminPostResponseDto extends CommonResponseDto {
     private Long id;
     private String title;
