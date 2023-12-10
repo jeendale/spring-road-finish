@@ -69,4 +69,8 @@ public class User {
         this.phone = userRequestDto.getPhone()== null? this.phone : userRequestDto.getPhone();
         return this;
     }
+    public User promote(Long userId) {
+        this.role = UserRoleEnum.ADMIN;
+        return this;
+    }
 }

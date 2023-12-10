@@ -33,7 +33,7 @@ public class AdminController {
     }
 
     @GetMapping("/posts/{id}")
-    public ResponseEntity<CommonResponseDto> getNoticPost(@PathVariable Long id){
+    public ResponseEntity<CommonResponseDto> getNoticePost(@PathVariable Long id){
         try{
             AdminPostResponseDto responseDto=postService.getNoticePost(id);
             return ResponseEntity.ok().body(responseDto);
@@ -82,5 +82,15 @@ public class AdminController {
         }
     }
 
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @PatchMapping("/users/{userId}/promote")
+    public ResponseEntity<CommonResponseDto> promoteUser(@PathVariable Long userId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        try {
+            userService.promoteUser(userId,userDetails);
+            return ResponseEntity.ok().body(new CommonResponseDto("해당 회원을 승격시켰습니다.",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
+    }
 
 }
