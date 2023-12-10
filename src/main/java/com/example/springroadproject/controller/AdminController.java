@@ -33,7 +33,7 @@ public class AdminController {
     }
 
     @GetMapping("/posts/{id}")
-    public ResponseEntity<CommonResponseDto> getNoticPost(@PathVariable Long id){
+    public ResponseEntity<CommonResponseDto> getNoticePost(@PathVariable Long id){
         try{
             AdminPostResponseDto responseDto=postService.getNoticePost(id);
             return ResponseEntity.ok().body(responseDto);
