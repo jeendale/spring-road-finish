@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLOutput;
@@ -26,22 +27,50 @@ public class AdminController {
     private final PostService postService;
 
     @Secured(UserRoleEnum.Authority.ADMIN)
-    @PostMapping("/posts")
-    public ResponseEntity<CommonResponseDto> noticePost(@RequestBody AdminPostRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails){
+    @PostMapping("/notices")
+    public ResponseEntity<CommonResponseDto> noticePost(@RequestBody PostRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails){
         AdminPostResponseDto adminPostResponseDto=postService.createPostByAdmin(requestDto,userDetails);
         return ResponseEntity.ok().body(adminPostResponseDto);
     }
 
-    @GetMapping("/posts/{id}")
+    @GetMapping("/notices/{id}")
     public ResponseEntity<CommonResponseDto> getNoticePost(@PathVariable Long id){
         try{
-            AdminPostResponseDto responseDto=postService.getNoticePost(id);
-            return ResponseEntity.ok().body(responseDto);
+
+            return ResponseEntity.ok().body(postService.getNoticePost(id));
         }catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
         }
 
     }
+
+    @GetMapping("/notices")
+    public List<AdminPostResponseDto> getNoticePostList(){
+        return postService.getNoticePostList();
+    }
+
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @PatchMapping("/notices/{id}")
+    public ResponseEntity<CommonResponseDto> updataNoticePost(@PathVariable Long id,@RequestBody PostRequestDto requestDto,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        try {
+            postService.updateNoticePost(id,requestDto,userDetails);
+            return ResponseEntity.ok().body(new CommonResponseDto("수정완료",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @DeleteMapping("/notices/{id}")
+    public ResponseEntity<CommonResponseDto>deleteNoticePost(@PathVariable Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        try {
+            postService.deleteNoticePost(id,userDetails);
+            return ResponseEntity.ok().body(new CommonResponseDto("삭제완료",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
     @Secured(UserRoleEnum.Authority.ADMIN)
     @PatchMapping("/posts/{postId}")
     public ResponseEntity<CommonResponseDto> updatePostByAdmin(@PathVariable Long postId,@RequestBody PostRequestDto requestDto){
@@ -53,7 +82,16 @@ public class AdminController {
         }
     }
 
-
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<CommonResponseDto> deletePostByAdmin(@PathVariable Long postId){
+        try {
+            postService.deletePostByAdmin(postId);
+            return ResponseEntity.ok().body(new CommonResponseDto("삭제되었습니다.",HttpStatus.OK.value()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
+        }
+    }
 
     @Secured(UserRoleEnum.Authority.ADMIN)
     @GetMapping("/users")
@@ -92,5 +130,6 @@ public class AdminController {
             return ResponseEntity.badRequest().body(new CommonResponseDto(e.getMessage(),HttpStatus.BAD_REQUEST.value()));
         }
     }
+
 
 }

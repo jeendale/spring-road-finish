@@ -1,6 +1,6 @@
 package com.example.springroadproject.entity;
 
-import com.example.springroadproject.dto.AdminPostRequestDto;
+import com.example.springroadproject.dto.PostRequestDto;
 import com.example.springroadproject.security.UserDetailsImpl;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,12 +24,12 @@ public class AdminPost extends Timestamped{
     @JoinColumn(name = "user_id")
     private User user;
 
-    public AdminPost(AdminPostRequestDto requestDto, UserDetailsImpl userDetails){
+    public AdminPost(PostRequestDto requestDto, UserDetailsImpl userDetails){
         this.title=requestDto.getTitle();
         this.content= requestDto.getContent();
         this.user=userDetails.getUser();
     }
-    public void AdminPostUpdate(AdminPostRequestDto requestDto){
+    public void adminPostUpdate(PostRequestDto requestDto){
         this.title=requestDto.getTitle();
         this.content=requestDto.getContent();
     }
