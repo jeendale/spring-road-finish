@@ -37,6 +37,9 @@ public class User {
     private List<Post> postList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST,orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST,orphanRemoval = true)
     private List<PwHistory> passwordList = new ArrayList<>();
 
     //userRoleEnum이랑 연결 DB에 enum타입 이름 그대로 사용
